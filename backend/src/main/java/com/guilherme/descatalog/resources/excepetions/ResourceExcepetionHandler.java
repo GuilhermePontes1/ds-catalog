@@ -1,6 +1,7 @@
 package com.guilherme.descatalog.resources.excepetions;
 
-import com.guilherme.descatalog.exceptions.ResourceNotFoundException;
+import com.guilherme.descatalog.services.exceptions.DatabaseException;
+import com.guilherme.descatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,14 +17,27 @@ public class ResourceExcepetionHandler implements Serializable {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
         StandardError err = new StandardError();
         err.setTimestamp(Instant.now());
-        err.setStatus(String.valueOf(HttpStatus.NOT_FOUND.value()));
+        err.setStatus(String.valueOf(status.value()));
         err.setError("Resource not found");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<StandardError> database(DatabaseException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(String.valueOf(status.value()));
+        err.setError("Database exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
     }
 
 }

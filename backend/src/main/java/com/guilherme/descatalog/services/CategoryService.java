@@ -2,9 +2,12 @@ package com.guilherme.descatalog.services;
 
 import com.guilherme.descatalog.dto.CategoryDTO;
 import com.guilherme.descatalog.entities.Category;
-import com.guilherme.descatalog.exceptions.ResourceNotFoundException;
+import com.guilherme.descatalog.services.exceptions.DatabaseException;
+import com.guilherme.descatalog.services.exceptions.ResourceNotFoundException;
 import com.guilherme.descatalog.repositories.CategoryRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +59,17 @@ public class CategoryService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Id not found" + id);
         }
+
+    }
+    public void delete(Long id) {
+    try {
+        respository.deleteById(id);
+
+    }catch (EmptyResultDataAccessException e ) {
+        throw new ResourceNotFoundException("Id not found " + id);
+    }catch (DataIntegrityViolationException e ) {
+        throw new DatabaseException("Integrity violation");
+    }
+
     }
 }

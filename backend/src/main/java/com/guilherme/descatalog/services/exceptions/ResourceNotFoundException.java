@@ -1,4 +1,4 @@
-package com.guilherme.descatalog.exceptions;
+package com.guilherme.descatalog.services.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException{
     private static final long serialVersionUID = 1L;
