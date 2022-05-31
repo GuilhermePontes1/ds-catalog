@@ -2,19 +2,19 @@ package com.guilherme.descatalog.services;
 
 import com.guilherme.descatalog.dto.CategoryDTO;
 import com.guilherme.descatalog.entities.Category;
+import com.guilherme.descatalog.repositories.CategoryRespository;
 import com.guilherme.descatalog.services.exceptions.DatabaseException;
 import com.guilherme.descatalog.services.exceptions.ResourceNotFoundException;
-import com.guilherme.descatalog.repositories.CategoryRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -23,10 +23,10 @@ public class CategoryService {
     private CategoryRespository respository;
 
     @Transactional(readOnly = true)
-    public List<CategoryDTO> findAll() {
+    public Page<CategoryDTO> findAllPaged(PageRequest pageRequest) {
 
-        List<Category> list = respository.findAll();
-        return list.stream().map(CategoryDTO::new).collect(Collectors.toList());
+        Page<Category> list = respository.findAll(pageRequest);
+        return list.map(CategoryDTO::new);
     }
 
     @Transactional(readOnly = true)
